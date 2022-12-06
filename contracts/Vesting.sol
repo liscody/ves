@@ -14,10 +14,10 @@ contract Vesting is Ownable, ReentrancyGuard {
     struct VestingSchedule {
         uint64 start;
         uint64 end;
+        uint64 lastWithdrawnOn;
         uint256 totalVestedAmount; /// total amount
         uint256 permittedAmountForInitClaim;
         uint256 withdrawn;
-        uint256 lastWithdrawnOn;
     }
     
     uint64 constant PERCENTAGE_BP = 1e4; /// 10_000
@@ -55,11 +55,11 @@ contract Vesting is Ownable, ReentrancyGuard {
 
         vestingSchedules[beneficiary][currency] = VestingSchedule(
             start,
-            end,
+            end,            
+            0, /// initial withdraw  timestamp
             totalVestedAmount,
             permittedAmountForInitClaim, /// permitted amount to immediately withdraw
-            0, /// initial  withdrawn amount
-            0 /// initial withdraw  timestamp
+            0 /// initial  withdrawn amount
         );
 
         if (currency == address(0)) {
@@ -130,7 +130,7 @@ contract Vesting is Ownable, ReentrancyGuard {
         );
 
         schedule.withdrawn += currentAmountToWithdraw;
-        schedule.lastWithdrawnOn = block.timestamp;
+        schedule.lastWithdrawnOn = uint64(block.timestamp);
 
         if (currency == address(0)) {
             (bool os, ) = msg.sender.call{value: currentAmountToWithdraw}("");

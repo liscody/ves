@@ -49,8 +49,8 @@ import "solidity-docgen"; // The tool by OpenZeppelin to generate documentation 
 // See `config.networks`.
 // const POLYGON_MAINNET_KEYS: string[] = process.env.POLYGON_MAINNET_KEYS ?
 //     process.env.POLYGON_MAINNET_KEYS.split(",") : [];
-const POLYGON_TESTNET_KEYS: string[] = process.env.POLYGON_TESTNET_KEYS // ?
-//  process.env.POLYGON_TESTNET_KEYS.split(",") : [];
+const POLYGON_TESTNET_KEYS: string[] = process.env.POLYGON_TESTNET_KEYS ?
+    process.env.POLYGON_TESTNET_KEYS.split(",") : [];
 
 /*
  * The solc compiler optimizer configuration. (The optimizer is disabled by default).
@@ -140,7 +140,11 @@ const config: HardhatUserConfig = {
         // },
         mumbai: {
             url:  process.env.MUMBAI_URL || "",
-            accounts: [POLYGON_TESTNET_KEYS]
+            chainId: 80001,
+            accounts: process.env.POLYGON_TESTNET_KEYS !== undefined ? [process.env.POLYGON_TESTNET_KEYS] : [],
+
+
+            // accounts: ["4e6581576926037e16f412324a1f050c1bc5794b1fa86abf29c57bf4399ae188"]
         }
     },
     contractSizer: {
@@ -178,11 +182,11 @@ const config: HardhatUserConfig = {
          * https://hardhat.org/hardhat-runner/plugins/nomiclabs-hardhat-etherscan#multiple-api-keys-and-alternative-block-explorers.
          */
         apiKey: {
-        //     mainnet: "ETHERSCAN_API_KEY",
-        //     goerli: "ETHERSCAN_API_KEY",
-        //     sepolia: "ETHERSCAN_API_KEY",
-        //     polygon: "POLYGONSCAN_API_KEY",
-            polygonMumbai: "POLYGONSCAN_API_KEY"
+            mainnet: "ETHERSCAN_API_KEY",
+            goerli: "ETHERSCAN_API_KEY",
+            sepolia: "ETHERSCAN_API_KEY",
+            polygon: "POLYGONSCAN_API_KEY",
+            polygonMumbai: process.env.POLYGONSCAN_API_KEY// "POLYGONSCAN_API_KEY"
         }
     },
     abiExporter: {
